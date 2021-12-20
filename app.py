@@ -1,7 +1,8 @@
 from flask import send_from_directory, send_file, Flask
 from flask_eureka import Eureka
-
 from flask_eureka.eureka import eureka_bp
+
+from controller.aas_controller import aas
 
 APPCODE = ''  # eg: 82a506
 HOSTNAME = ''  # eg: b0d3-2405-201-f00f-30a0-a527-2ade-621c-997d.ngrok.io
@@ -26,6 +27,7 @@ eureka = Eureka(app)
 eureka.register_service(name=APPCODE)
 
 app.register_blueprint(eureka_bp)
+app.register_blueprint(aas, url_prefix='/aas')
 
 
 @app.route("/<path:path>")
@@ -42,4 +44,4 @@ def entry():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=5001)
