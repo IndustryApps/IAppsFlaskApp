@@ -1,8 +1,10 @@
-from flask import Flask, send_from_directory, send_file, redirect
+from flask import send_from_directory, send_file, Flask
 from flask_eureka import Eureka
 
-APPCODE = ''
-HOSTNAME = ''
+from flask_eureka.eureka import eureka_bp
+
+APPCODE = ''  # eg: 82a506
+HOSTNAME = ''  # eg: b0d3-2405-201-f00f-30a0-a527-2ade-621c-997d.ngrok.io
 
 if not APPCODE:
     print('AppCode cannot be null or empty. You can find the appCode in your app\'s publish page')
@@ -16,16 +18,14 @@ app.config.update(
     SERVICE_NAME=APPCODE,
     EUREKA_SERVICE_URL='https://servicediscovery.uat.industryapps.net/',
     EUREKA_INSTANCE_HOSTNAME=HOSTNAME,
+    EUREKA_HOME_PAGE_URL="https://" + HOSTNAME,
     EUREKA_INSTANCE_PORT=80
 )
 
 eureka = Eureka(app)
 eureka.register_service(name=APPCODE)
 
-
-@app.route('/healthcheck')
-def health_check():
-    return redirect("/")
+app.register_blueprint(eureka_bp)
 
 
 @app.route("/<path:path>")
